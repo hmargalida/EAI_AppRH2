@@ -10,11 +10,27 @@ package fr.miage.tlse.apprh.enumeration;
  * @author Heloise
  */
 public enum StatutFormateur {
-    Indisponible("Indisponible"), Pressenti("Pressenti"), Affecte("Affecté"), Disponible("Disponible");
+    INDISPONIBLE("Indisponible"), PRESSENTI("Pressenti"), AFFECTE("Affecté"), DISPONIBLE("Disponible");
     
     private String libelle; 
     
+    StatutFormateur() {
+        
+    }
+    
     StatutFormateur(String libelle) {
+        this.libelle = libelle;
+    }
+
+    public String getId() {
+        return name();
+    }
+    
+    public String getLibelle() {
+        return libelle;
+    }
+
+    public void setLibelle(String libelle) {
         this.libelle = libelle;
     }
 }

@@ -3,22 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package fr.miage.tlse.apprh.enumeration;
+package fr.miage.tlse.apprh.export;
 
 /**
  *
  * @author Heloise
  */
-public enum Competence {
-    JAVA("Java"), GESTIONPROJET("Gestion de projet"), BD("Base de données"); 
+public class CompetenceExport {
     
-    private String libelle;
+    public String libelle;
     
-    Competence() {
-        
+    public CompetenceExport() {
     }
     
-    Competence(String libelle) {
+    public CompetenceExport(String libelle) {
         this.libelle = libelle;
     }
 

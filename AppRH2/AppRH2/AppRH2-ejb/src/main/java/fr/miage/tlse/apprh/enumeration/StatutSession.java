@@ -9,16 +9,16 @@ package fr.miage.tlse.apprh.enumeration;
  *
  * @author Heloise
  */
-public enum Competence {
-    JAVA("Java"), GESTIONPROJET("Gestion de projet"), BD("Base de données"); 
+public enum StatutSession {
+    EN_PROJET("En projet"), PLANIFIEE("Planifié"), ANNULEE("Annulée"), TERMINEE("Terminée");
     
-    private String libelle;
+    private String libelle; 
     
-    Competence() {
+    StatutSession() {
         
     }
     
-    Competence(String libelle) {
+    StatutSession(String libelle) {
         this.libelle = libelle;
     }
 

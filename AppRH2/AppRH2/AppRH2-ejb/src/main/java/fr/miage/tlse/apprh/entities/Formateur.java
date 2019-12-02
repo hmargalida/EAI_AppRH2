@@ -10,16 +10,16 @@ import fr.miage.tlse.apprh.enumeration.StatutFormateur;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
 /**
  *
@@ -31,7 +31,7 @@ public class Formateur implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long idFormateur;
+    private Long id;
     
     @Column(nullable = false)
     private String nom;
@@ -39,10 +39,12 @@ public class Formateur implements Serializable {
     @Column(nullable = false)
     private String prenom;
 
-    @Column(nullable = false)
+    @ElementCollection
+    @OneToMany
     List<Competence> listeCompetences;
     
-    Map<Integer, StatutFormateur> planningFormateur;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "formateur")  
+    List<DisponibiliteFormateur> disponibiliteFormateur;
     
     /**
      * Constructeur d'un objet Client
@@ -52,27 +54,22 @@ public class Formateur implements Serializable {
 
     /**
      * Constructeur d'un objet Formateur
-     * @param prenom prénom du formateur
+     * @param prenom prĂ©nom du formateur
      * @param nom nom du formateur
      */
     public Formateur(String prenom, String nom) {
         this.nom = nom;
         this.prenom = prenom;
         this.listeCompetences = new ArrayList<>();
-        this.planningFormateur = new HashMap<>();
-        int numSemaine = Calendar.getInstance().get(Calendar.WEEK_OF_YEAR);
-        int nombreSemaineTotal = Calendar.getInstance().getActualMaximum(Calendar.WEEK_OF_YEAR);
-        for(int i=numSemaine; i<=nombreSemaineTotal; i++) {
-            planningFormateur.put(i, StatutFormateur.Disponible);
-        }
+        this.disponibiliteFormateur = new ArrayList<>();
     }
 
-    public Long getIdFormateur() {
-        return idFormateur;
+    public Long getId() {
+        return id;
     }
 
-    public void setIdFormateur(Long idFormateur) {
-        this.idFormateur = idFormateur;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public List<Competence> getListeCompetences() {
@@ -83,12 +80,12 @@ public class Formateur implements Serializable {
         this.listeCompetences = listeCompetences;
     }
 
-    public Map<Integer, StatutFormateur> getPlanningFormateur() {
-        return planningFormateur;
+    public List<DisponibiliteFormateur> getDisponibiliteFormateur() {
+        return disponibiliteFormateur;
     }
 
-    public void setPlanningFormateur(Map<Integer, StatutFormateur> planningFormateur) {
-        this.planningFormateur = planningFormateur;
+    public void setDisponibiliteFormateur(List<DisponibiliteFormateur> disponibiliteFormateur) {
+        this.disponibiliteFormateur = disponibiliteFormateur;
     }
 
     public String getNom() {
@@ -110,7 +107,7 @@ public class Formateur implements Serializable {
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 97 * hash + Objects.hashCode(this.idFormateur);
+        hash = 97 * hash + Objects.hashCode(this.id);
         return hash;
     }
 
@@ -126,28 +123,26 @@ public class Formateur implements Serializable {
             return false;
         }
         final Formateur other = (Formateur) obj;
-        if (!Objects.equals(this.idFormateur, other.idFormateur)) {
-            return false;
-        }
-        return true;
+        return Objects.equals(this.id, other.id);
     }
     
     public boolean possedeCompetence(Competence c) {
-        if(this.listeCompetences.contains(c)) {
-            return true;
-        }
-        return false;
+        return this.listeCompetences.contains(c);
     }
     
     public void addCompetence(Competence c) {
         this.listeCompetences.add(c);
     }
     
-    public List<Integer> getDisponibiliteFormateur() {
+    public void addDisponibilite(DisponibiliteFormateur dispo) {
+        this.disponibiliteFormateur.add(dispo);
+    }
+    
+    public List<Integer> getDisponibilitesDuFormateur() {
         List<Integer> listDisponibiliteFormateur = new ArrayList<>();
-        for(int numSemaine : this.planningFormateur.keySet()) {
-            if(this.planningFormateur.get(numSemaine).equals(StatutFormateur.Disponible)) {
-                listDisponibiliteFormateur.add(numSemaine);
+        for(DisponibiliteFormateur dispo : this.disponibiliteFormateur) {
+            if(dispo.getStatutFormateur().equals(StatutFormateur.DISPONIBLE)) {
+                listDisponibiliteFormateur.add(dispo.getNumSemaine());
             }
         }
         return listDisponibiliteFormateur;
@@ -160,6 +155,6 @@ public class Formateur implements Serializable {
 
     @Override
     public String toString() {
-        return "Formateur{" + "idFormateur=" + idFormateur + ", nom=" + nom + ", prenom=" + prenom + ", listeCompetences=" + listeCompetences + ", planningFormateur=" + planningFormateur + '}';
+        return "Formateur{" + "idFormateur=" + id + ", nom=" + nom + ", prenom=" + prenom + ", listeCompetences=" + listeCompetences + ", planningFormateur=" + disponibiliteFormateur + '}';
     }
 }
